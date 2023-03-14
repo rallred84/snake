@@ -28,7 +28,7 @@
 .row > div:last-child,
 .row:first-child,
 .row:last-child {
-  border-color: rgb(3, 223, 3);
+  border-color: rgb(3, 255, 3);
 }
 .row {
   display: flex;
@@ -47,6 +47,6 @@
 }
 
 .snake {
-  background-color: rgb(3, 223, 3);
+  background-color: rgb(9, 130, 9);
   border: none;
 }

@@ -89,15 +89,21 @@ function snakeDirection() {
 
 document.addEventListener('keydown', (event) => {
   console.log(event.key);
-  if (event.key === 'ArrowRight') {
+  if (event.key === 'ArrowRight' && currentDirection !== 'left') {
     currentDirection = 'right';
-  } else if (event.key === 'ArrowUp') {
+  } else if (event.key === 'ArrowUp' && currentDirection !== 'down') {
     currentDirection = 'up';
-  } else if (event.key === 'ArrowLeft') {
+  } else if (event.key === 'ArrowLeft' && currentDirection !== 'right') {
     currentDirection = 'left';
-  } else if (event.key === 'ArrowDown') {
+  } else if (event.key === 'ArrowDown' && currentDirection !== 'up') {
     currentDirection = 'down';
   }
 });
 
-setInterval(moveSnake, 200);
+// setInterval(moveSnake, 200);
+
+// function dropApple() {
+//   let randomCol = Math.round(Math.random() * areaCols - 1);
+//   let randomRom = Math.round(Math.random() * areaRows - 1);
+//   let appleSpot = document.querySelector(``#r${randomRow}c${randomCol}``)
+// }
