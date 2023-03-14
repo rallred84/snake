@@ -1,0 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#game-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.row > div:first-child {
+  border-left: 7px solid;
+}
+.row > div:last-child {
+  border-right: 7px solid;
+}
+
+.row:first-child {
+  border-top: 7px solid;
+}
+.row:last-child {
+  border-bottom: 7px solid;
+}
+
+.row > div:first-child,
+.row > div:last-child,
+.row:first-child,
+.row:last-child {
+  border-color: rgb(3, 223, 3);
+}
+.row {
+  display: flex;
+}
+.row > div {
+  height: 20px;
+  width: 20px;
+}
+
+.blue {
+  background-color: rgb(33, 33, 110);
+}
+
+.gray {
+  background-color: rgb(62, 59, 59);
+}
+
+.snake {
+  background-color: rgb(3, 223, 3);
+  border: none;
+}
