@@ -10,15 +10,33 @@
   </head>
   <body>
     <h1>Snake</h1>
-    <container id="game-area">
-      <!-- Will inject play area via js into here -->
-      <!-- <div class="row">
+    <div id="center">
+      <div id="left"></div>
+      <container id="game-area">
+        <div class="pre-post">
+          <h3>Welcome to Snake!</h3>
+          <p>
+            Try to collect as many apples as you can, but be careful. Your snake
+            will grow with each apple it eats.
+          </p>
+          <p>
+            Avoid running into the walls (and yourself!) as you try to collect
+            as many apples as possible!
+          </p>
+          <button>Play Now!</button>
+        </div>
+
+        <!-- Will inject play area via js into here -->
+        <!-- <div class="row">
         <div class="pixel gray"></div>
         <div class="pixel blue"></div>
         <div class="pixel gray"></div>
         <div class="pixel blue"></div>
       </div> -->
-    </container>
-    <h3>Snake Length: 4</h3>
+      </container>
+      <div id="right"></div>
+    </div>
+    <h3 id="snake-length">Snake Length: 4</h3>
+    <h3 id="apples-eaten">Apples Eaten: 0</h3>
   </body>
 </html>
