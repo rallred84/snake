@@ -3,27 +3,45 @@ const areaCols = 25;
 const areaRows = 20;
 let applesEaten = 0;
 let snakeLength = 4;
-
-//Adding a boolean that will move go false when a key is pressed and then back to true after snake moves to prevent rapid presses that could cause snake to try and eat itself
-let canKeyDown = true;
-
-const lengthScore = document.querySelector('#snake-length');
-const appleScore = document.querySelector('#apples-eaten');
-function updateScores() {
-  lengthScore.textContent = snakeLength;
-  appleScore.textContent = applesEaten;
-}
-updateScores();
+let applesEatenHigh = 0;
+let snakeLengthHigh = 4;
 
 // Adding Row and Column Row Reference global variables that will both serve as the starting 'head' point of the snake, as well as an updatable reference point for moving the snake around the map
-let snakeColRef = Math.floor((areaCols - 1) / 2);
 let snakeRowRef = Math.floor((areaRows - 1) / 2);
+let snakeColRef = Math.floor((areaCols - 1) / 2);
 
 let snake = [];
 let droppedApples = [];
 let currentDirection = 'right';
 
-let gameArea = document.querySelector('#game-area');
+const lengthScore = document.querySelector('#snake-length');
+const appleScore = document.querySelector('#apples-eaten');
+
+const lengthHighScore = document.querySelector('#snake-length-high');
+const appleHighScore = document.querySelector('#apples-eaten-high');
+
+const startBox = document.querySelector('.pre-post');
+startBox.addEventListener('click', startGame);
+
+//creating a global variable for moving the snake so that it can be access by multiple functions
+let moveSnakeInterval;
+let appleInterval;
+
+let firstGame = true;
+
+function updateScores() {
+  lengthScore.textContent = snakeLength;
+  lengthHighScore.textContent = snakeLengthHigh;
+  appleScore.textContent = applesEaten;
+  appleHighScore.textContent = applesEatenHigh;
+}
+//Sets default scores at beginning of game
+updateScores();
+
+const gameArea = document.querySelector('#game-area');
+
+//Adding a boolean that will move go false when a key is pressed and then back to true after snake moves to prevent rapid presses that could cause snake to try and eat itself
+let canKeyDown = true;
 
 function createPlayArea() {
   // Use loop to create rows
@@ -47,7 +65,8 @@ function createPlayArea() {
           pixel.className = 'blue';
         } else pixel.className = 'gray';
       }
-      pixel.id = `r${i}c${j}`;
+      pixel.dataset.row = i;
+      pixel.dataset.column = j;
       row.appendChild(pixel);
     }
   }
@@ -56,30 +75,22 @@ function createPlayArea() {
 createPlayArea();
 
 function placeSnake() {
-  let startSpot = gameArea.querySelector(`#r${snakeRowRef}c${snakeColRef}`);
+  const snakeHeadRef = `[data-row="${snakeRowRef}"][data-column = "${snakeColRef}"]`;
+  let startSpot = gameArea.querySelector(snakeHeadRef);
   startSpot.classList.add('snake');
   //push refernce values to starting spot to snake array
-  const startSpotRef = `#r${snakeRowRef}c${snakeColRef}`;
-  snake.push(startSpotRef);
+  snake.push(snakeHeadRef);
   //Add 3 more snake pieces to left of snake 'head' to create starting snake
   let bodyColRef = snakeColRef - 1;
   for (let i = 0; i < snakeLength - 1; i++) {
-    let snakePiece = gameArea.querySelector(`#r${snakeRowRef}c${bodyColRef}`);
-    let snakePieceRef = `#r${snakeRowRef}c${bodyColRef}`;
+    let snakePieceRef = `[data-row="${snakeRowRef}"][data-column = "${bodyColRef}"]`;
+    let snakePiece = gameArea.querySelector(snakePieceRef);
     snakePiece.classList.add('snake');
     snake.push(snakePieceRef);
     bodyColRef--;
   }
 }
 
-let startBox = gameArea.querySelector('.pre-post');
-startBox.addEventListener('click', startGame);
-
-//creating a global variable for moving the snake so that it can be access by multiple functions
-let move;
-let appleInterval;
-
-let firstGame = true;
 function startGame() {
   if (firstGame) {
     gameArea.removeChild(startBox);
@@ -89,7 +100,7 @@ function startGame() {
   }
   placeSnake();
   setTimeout(() => {
-    move = setInterval(moveSnake, 75);
+    moveSnakeInterval = setInterval(moveSnake, 75);
     dropApple();
   }, 1000);
   appleInterval = setInterval(dropApple, 5000);
@@ -98,7 +109,7 @@ function startGame() {
 function moveSnake() {
   //Will Move differently based on direction, but for eachd direction, each time we move, we will add a new 'snake head' point to the start of the array and will remove the last value of the array
   snakeDirection();
-  let newHeadRef = `#r${snakeRowRef}c${snakeColRef}`;
+  let newHeadRef = `[data-row="${snakeRowRef}"][data-column = "${snakeColRef}"]`;
 
   if (checkSpotConditions(newHeadRef)) {
     let newHead = gameArea.querySelector(newHeadRef);
@@ -108,41 +119,77 @@ function moveSnake() {
   canKeyDown = true;
 }
 
+function snakeDirection() {
+  if (currentDirection === 'right') {
+    snakeColRef++;
+  } else if (currentDirection === 'up') {
+    snakeRowRef--;
+  } else if (currentDirection === 'left') {
+    snakeColRef--;
+  } else if (currentDirection === 'down') {
+    snakeRowRef++;
+  }
+}
+
+function dropApple() {
+  let randomCol = Math.floor(Math.random() * areaCols);
+  let randomRow = Math.floor(Math.random() * areaRows);
+  //Check if spot is occupied by the snake already
+  let randomLocId = `[data-row="${randomRow}"][data-column = "${randomCol}"]`;
+  let randomLoc = gameArea.querySelector(randomLocId);
+  //If the random location already contains the snake class, start the drop app over
+  if (
+    randomLoc.classList.contains('snake') ||
+    randomLoc.classList.contains('apple')
+  ) {
+    return dropApple();
+  } else {
+    let appleSpot = gameArea.querySelector(randomLocId);
+    appleSpot.classList.add('apple');
+    droppedApples.push(randomLocId);
+  }
+}
+
 function checkSpotConditions(newHeadRef) {
-  //If snake hits wall, game over
-  if (!gameArea.querySelector(newHeadRef)) {
+  const snakesNextHeadPosition = gameArea.querySelector(newHeadRef);
+  //If snake hits wall(reference point doeesnt exist), game over
+  if (!snakesNextHeadPosition) {
     let message = 'You hit a wall!';
     endGameScreen(message);
     return false;
   }
   //If snake hits snake, game over
-  if (gameArea.querySelector(newHeadRef).classList.contains('snake')) {
+  if (snakesNextHeadPosition.classList.contains('snake')) {
     let message = "You can't eat yourself!!";
     endGameScreen(message);
     return false;
   }
   //If does not hit an apple, we will remove the last piece of the previous snake and the snake will not grow
-  if (!gameArea.querySelector(newHeadRef).classList.contains('apple')) {
+  if (!snakesNextHeadPosition.classList.contains('apple')) {
     let removeSnakePiece = gameArea.querySelector(snake[snake.length - 1]);
     removeSnakePiece.classList.remove('snake');
     snake.pop();
     //But if the snake does hit an apple, we will remove the apple from the board and the snake will effectively grow one square
   } else {
-    gameArea.querySelector(newHeadRef).classList.remove('apple');
+    snakesNextHeadPosition.classList.remove('apple');
     applesEaten++;
     snakeLength++;
+    if (applesEaten > applesEatenHigh) {
+      applesEatenHigh = applesEaten;
+    }
+    if (snakeLength > snakeLengthHigh) {
+      snakeLengthHigh = snakeLength;
+    }
     updateScores();
   }
   return true;
 }
 
 function endGameScreen(str) {
-  clearInterval(move);
+  clearInterval(moveSnakeInterval);
   clearInterval(appleInterval);
   const endScreen = document.createElement('div');
   gameArea.appendChild(endScreen);
-  console.log(gameArea);
-
   endScreen.className = 'pre-post';
   endScreen.innerHTML = `
   <h3>Game Over:</h3>
@@ -166,14 +213,12 @@ function resetGameBoard() {
     snakePiece.classList.remove('snake');
   }
   snake = [];
-
   //Remove Existing Apples
   for (apple of droppedApples) {
     let oldApple = gameArea.querySelector(apple);
     oldApple.classList.remove('apple');
   }
   droppedApples = [];
-
   //Reset reference points
   snakeColRef = Math.floor((areaCols - 1) / 2);
   snakeRowRef = Math.floor((areaRows - 1) / 2);
@@ -183,18 +228,6 @@ function resetGameBoard() {
   //default current direction
   currentDirection = 'right';
   updateScores();
-}
-
-function snakeDirection() {
-  if (currentDirection === 'right') {
-    snakeColRef++;
-  } else if (currentDirection === 'up') {
-    snakeRowRef--;
-  } else if (currentDirection === 'left') {
-    snakeColRef--;
-  } else if (currentDirection === 'down') {
-    snakeRowRef++;
-  }
 }
 
 document.addEventListener('keydown', (event) => {
@@ -211,23 +244,3 @@ document.addEventListener('keydown', (event) => {
   }
   canKeyDown = false;
 });
-
-let test = 1;
-function dropApple() {
-  let randomCol = Math.floor(Math.random() * areaCols);
-  let randomRow = Math.floor(Math.random() * areaRows);
-  //Check if spot is occupied by the snake already
-  let randomLocId = `#r${randomRow}c${randomCol}`;
-  let randomLoc = gameArea.querySelector(randomLocId);
-  //If the random location already contains the snake class, start the drop app over
-  if (
-    randomLoc.classList.contains('snake') ||
-    randomLoc.classList.contains('apple')
-  ) {
-    return dropApple();
-  } else {
-    let appleSpot = gameArea.querySelector(randomLocId);
-    appleSpot.classList.add('apple');
-    droppedApples.push(randomLocId);
-  }
-}
