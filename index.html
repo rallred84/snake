@@ -9,34 +9,79 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Snake</h1>
-    <div id="center">
-      <div id="left"></div>
-      <container id="game-area">
-        <div class="pre-post">
-          <h3>Welcome to Snake!</h3>
-          <p>
-            Try to collect as many apples as you can, but be careful. Your snake
-            will grow with each apple it eats.
-          </p>
-          <p>
-            Avoid running into the walls (and yourself!) as you try to collect
-            as many apples as possible!
-          </p>
-          <button>Play Now!</button>
+    <header>
+      <h1>red8four arcade</h1>
+    </header>
+    <main>
+      <div id="center">
+        <div id="options-and-stats">
+          <h2>Game Options</h2>
+          <div class="select-option">
+            <label for="speed">Snake Speed</label>
+            <select id="speed" name="speed">
+              <option value="Slow">Slow</option>
+              <option value="Normal">Normal</option>
+              <option value="Faster">Faster</option>
+              <option value="Insane">Insane</option>
+              <option value="Coming Soon" selected>Coming Soon</option>
+            </select>
+          </div>
+          <div class="select-option">
+            <label for="wrap">Snake Wrap</label>
+            <select id="wrap" name="wrap">
+              <option value="Off">Off</option>
+              <option value="On">On</option>
+              <option value="Coming Soon" selected>Coming Soon</option>
+            </select>
+          </div>
+          <div class="select-option">
+            <label for="barricades">Additional Barricades</label>
+            <select id="barricades" name="barricades">
+              <option value="Off">Off</option>
+              <option value="On">On</option>
+              <option value="Coming Soon" selected>Coming Soon</option>
+            </select>
+          </div>
+          <h2>Current Game Stats</h2>
+          <div class="scoreboard">
+            <div class="score">
+              <p>Snake Length</p>
+              <p id="snake-length">4</p>
+            </div>
+            <div class="score">
+              <p>Apples Eaten</p>
+              <p id="apples-eaten">0</p>
+            </div>
+          </div>
+          <h2>High Score</h2>
+          <div class="scoreboard">
+            <div class="score">
+              <p>Snake Length</p>
+              <p>4</p>
+            </div>
+            <div class="score">
+              <p>Apples Eaten</p>
+              <p>0</p>
+            </div>
+          </div>
         </div>
-
-        <!-- Will inject play area via js into here -->
-        <!-- <div class="row">
-        <div class="pixel gray"></div>
-        <div class="pixel blue"></div>
-        <div class="pixel gray"></div>
-        <div class="pixel blue"></div>
-      </div> -->
-      </container>
-      <div id="right"></div>
-    </div>
-    <h3 id="snake-length">Snake Length: 4</h3>
-    <h3 id="apples-eaten">Apples Eaten: 0</h3>
+        <div class="right">
+          <container id="game-area">
+            <div class="pre-post">
+              <h3>Welcome to Snake!</h3>
+              <p>
+                Try to collect as many apples as you can, but be careful. Your
+                snake will grow with each apple it eats.
+              </p>
+              <p>
+                Avoid running into the walls (and yourself!) as you try to
+                collect as many apples as possible!
+              </p>
+              <button>Play Now!</button>
+            </div>
+          </container>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

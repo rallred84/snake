@@ -10,8 +10,8 @@ let canKeyDown = true;
 const lengthScore = document.querySelector('#snake-length');
 const appleScore = document.querySelector('#apples-eaten');
 function updateScores() {
-  lengthScore.textContent = `Snake Length: ${snakeLength}`;
-  appleScore.textContent = `Apples Eaten: ${applesEaten}`;
+  lengthScore.textContent = snakeLength;
+  appleScore.textContent = applesEaten;
 }
 updateScores();
 
@@ -20,6 +20,7 @@ let snakeColRef = Math.floor((areaCols - 1) / 2);
 let snakeRowRef = Math.floor((areaRows - 1) / 2);
 
 let snake = [];
+let droppedApples = [];
 let currentDirection = 'right';
 
 let gameArea = document.querySelector('#game-area');
@@ -88,7 +89,7 @@ function startGame() {
   }
   placeSnake();
   setTimeout(() => {
-    move = setInterval(moveSnake, 200);
+    move = setInterval(moveSnake, 75);
     dropApple();
   }, 1000);
   appleInterval = setInterval(dropApple, 5000);
@@ -152,7 +153,8 @@ function endGameScreen(str) {
   </p>
   <button>Try Again!</button>
 `;
-  endScreen.addEventListener('click', startGame);
+  let restartButton = endScreen.querySelector('button');
+  restartButton.addEventListener('click', startGame);
 }
 
 function resetGameBoard() {
@@ -163,9 +165,15 @@ function resetGameBoard() {
     let snakePiece = gameArea.querySelector(piece);
     snakePiece.classList.remove('snake');
   }
+  snake = [];
 
   //Remove Existing Apples
-  //
+  for (apple of droppedApples) {
+    let oldApple = gameArea.querySelector(apple);
+    oldApple.classList.remove('apple');
+  }
+  droppedApples = [];
+
   //Reset reference points
   snakeColRef = Math.floor((areaCols - 1) / 2);
   snakeRowRef = Math.floor((areaRows - 1) / 2);
@@ -174,8 +182,7 @@ function resetGameBoard() {
   snakeLength = 4;
   //default current direction
   currentDirection = 'right';
-  // empty snake Array
-  snake = [];
+  updateScores();
 }
 
 function snakeDirection() {
@@ -212,7 +219,7 @@ function dropApple() {
   //Check if spot is occupied by the snake already
   let randomLocId = `#r${randomRow}c${randomCol}`;
   let randomLoc = gameArea.querySelector(randomLocId);
-  //If the random location already contains the snake class, start the drop app
+  //If the random location already contains the snake class, start the drop app over
   if (
     randomLoc.classList.contains('snake') ||
     randomLoc.classList.contains('apple')
@@ -221,5 +228,6 @@ function dropApple() {
   } else {
     let appleSpot = gameArea.querySelector(randomLocId);
     appleSpot.classList.add('apple');
+    droppedApples.push(randomLocId);
   }
 }
