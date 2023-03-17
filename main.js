@@ -47,7 +47,8 @@ function createPlayArea() {
           pixel.className = 'blue';
         } else pixel.className = 'gray';
       }
-      pixel.id = `r${i}c${j}`;
+      pixel.dataset.row = i;
+      pixel.dataset.column = j;
       row.appendChild(pixel);
     }
   }
@@ -56,10 +57,13 @@ function createPlayArea() {
 createPlayArea();
 
 function placeSnake() {
-  let startSpot = gameArea.querySelector(`#r${snakeRowRef}c${snakeColRef}`);
+  const startSpotRef = `[data-row = ${snakeRowRef}][data-column = ${snakeColRef}]`;
+  console.log(startSpotRef);
+  let startSpot = gameArea.querySelector(
+    `[data-row = ${snakeRowRef}][data-column = ${snakeColRef}]`
+  );
   startSpot.classList.add('snake');
   //push refernce values to starting spot to snake array
-  const startSpotRef = `#r${snakeRowRef}c${snakeColRef}`;
   snake.push(startSpotRef);
   //Add 3 more snake pieces to left of snake 'head' to create starting snake
   let bodyColRef = snakeColRef - 1;
@@ -212,7 +216,6 @@ document.addEventListener('keydown', (event) => {
   canKeyDown = false;
 });
 
-let test = 1;
 function dropApple() {
   let randomCol = Math.floor(Math.random() * areaCols);
   let randomRow = Math.floor(Math.random() * areaRows);
@@ -231,3 +234,11 @@ function dropApple() {
     droppedApples.push(randomLocId);
   }
 }
+
+let body = document.querySelector('body');
+body.addEventListener('click', (e) => {
+  console.log(body.dataset.row);
+});
+
+// let test = document.querySelector('[data-row = "3"][data-column = "2"]');
+// test.className = 'apple';
