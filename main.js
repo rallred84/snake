@@ -78,6 +78,10 @@ function placeSnake() {
   const snakeHeadRef = `[data-row="${snakeRowRef}"][data-column = "${snakeColRef}"]`;
   let startSpot = gameArea.querySelector(snakeHeadRef);
   startSpot.classList.add('snake');
+  const snakeHeadArt = document.createElement('img');
+  snakeHeadArt.src = 'images/snakehead.png';
+  startSpot.appendChild(snakeHeadArt);
+
   //push refernce values to starting spot to snake array
   snake.push(snakeHeadRef);
   //Add 3 more snake pieces to left of snake 'head' to create starting snake
@@ -87,7 +91,74 @@ function placeSnake() {
     let snakePiece = gameArea.querySelector(snakePieceRef);
     snakePiece.classList.add('snake');
     snake.push(snakePieceRef);
+    const snakeBodyArt = document.createElement('img');
+    if (i == snakeLength - 2) {
+      snakeBodyArt.src = 'images/snaketail.png';
+    } else {
+      snakeBodyArt.src = 'images/snakebody.png';
+    }
+    snakePiece.appendChild(snakeBodyArt);
+
     bodyColRef--;
+  }
+}
+
+function updateSnakeImages() {
+  //loop through snake and update all images
+  for (piece in snake) {
+    const squareToUpdate = document.querySelector(snake[piece]);
+    squareToUpdate.innerHTML = '';
+    const snakeArt = document.createElement('img');
+    if (piece == 0) {
+      snakeArt.src = 'images/snakehead.png';
+      if (currentDirection === 'right') {
+        snakeArt.className = 'point-right';
+      }
+      if (currentDirection === 'up') {
+        snakeArt.className = 'point-up';
+      }
+      if (currentDirection === 'left') {
+        snakeArt.className = 'point-left';
+      }
+      if (currentDirection === 'down') {
+        snakeArt.className = 'point-down';
+      }
+    } else if (piece == snake.length - 1) {
+      snakeArt.src = 'images/snaketail.png';
+      //Compare tail to piece before it to determine direction tail should face
+      let tailPiece = document.querySelector(snake[piece]);
+      let secondToLastPiece = document.querySelector(snake[piece - 1]);
+      //horizontal align
+      if (
+        Number(tailPiece.dataset.row) === Number(secondToLastPiece.dataset.row)
+      ) {
+        if (
+          Number(tailPiece.dataset.column) >
+          Number(secondToLastPiece.dataset.column)
+        ) {
+          snakeArt.className = 'point-left';
+        } else {
+          snakeArt.className = 'point-right';
+        }
+      }
+      //vertical align
+      if (
+        Number(tailPiece.dataset.column) ===
+        Number(secondToLastPiece.dataset.column)
+      ) {
+        if (
+          Number(tailPiece.dataset.row) > Number(secondToLastPiece.dataset.row)
+        ) {
+          snakeArt.className = 'point-up';
+        } else {
+          snakeArt.className = 'point-down';
+        }
+      }
+    } else {
+      snakeArt.src = 'images/snakebody.png';
+    }
+
+    squareToUpdate.appendChild(snakeArt);
   }
 }
 
@@ -100,7 +171,7 @@ function startGame() {
   }
   placeSnake();
   setTimeout(() => {
-    moveSnakeInterval = setInterval(moveSnake, 75);
+    moveSnakeInterval = setInterval(moveSnake, 150);
     dropApple();
   }, 1000);
   appleInterval = setInterval(dropApple, 5000);
@@ -117,6 +188,7 @@ function moveSnake() {
     snake.unshift(newHeadRef);
   }
   canKeyDown = true;
+  updateSnakeImages();
 }
 
 function snakeDirection() {
@@ -144,7 +216,10 @@ function dropApple() {
   ) {
     return dropApple();
   } else {
-    let appleSpot = gameArea.querySelector(randomLocId);
+    const appleSpot = gameArea.querySelector(randomLocId);
+    const appleImage = document.createElement('img');
+    appleImage.src = 'images/apple.png';
+    appleSpot.appendChild(appleImage);
     appleSpot.classList.add('apple');
     droppedApples.push(randomLocId);
   }
@@ -168,7 +243,10 @@ function checkSpotConditions(newHeadRef) {
   if (!snakesNextHeadPosition.classList.contains('apple')) {
     let removeSnakePiece = gameArea.querySelector(snake[snake.length - 1]);
     removeSnakePiece.classList.remove('snake');
+    //To remove snake art
+    removeSnakePiece.innerHTML = '';
     snake.pop();
+
     //But if the snake does hit an apple, we will remove the apple from the board and the snake will effectively grow one square
   } else {
     snakesNextHeadPosition.classList.remove('apple');
@@ -182,6 +260,7 @@ function checkSpotConditions(newHeadRef) {
     }
     updateScores();
   }
+
   return true;
 }
 
@@ -211,12 +290,14 @@ function resetGameBoard() {
   for (piece of snake) {
     let snakePiece = gameArea.querySelector(piece);
     snakePiece.classList.remove('snake');
+    snakePiece.innerHTML = '';
   }
   snake = [];
   //Remove Existing Apples
   for (apple of droppedApples) {
     let oldApple = gameArea.querySelector(apple);
     oldApple.classList.remove('apple');
+    oldApple.innerHTML = '';
   }
   droppedApples = [];
   //Reset reference points
