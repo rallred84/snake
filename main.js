@@ -111,6 +111,7 @@ function updateSnakeImages() {
     const squareToUpdate = document.querySelector(snake[piece]);
     squareToUpdate.innerHTML = '';
     const snakeArt = document.createElement('img');
+    //Determines art for snake body
     if (piece == 0) {
       snakeArt.src = 'images/snakehead.png';
       if (currentDirection === 'right') {
@@ -125,6 +126,7 @@ function updateSnakeImages() {
       if (currentDirection === 'down') {
         snakeArt.className = 'point-down';
       }
+      //Determines art for snake tail
     } else if (piece == snake.length - 1) {
       snakeArt.src = 'images/snaketail.png';
       //Compare tail to piece before it to determine direction tail should face
@@ -156,11 +158,65 @@ function updateSnakeImages() {
           snakeArt.className = 'point-down';
         }
       }
-    } else {
-      snakeArt.src = 'images/snakebody.png';
     }
-
     squareToUpdate.appendChild(snakeArt);
+
+    if (piece > 1) {
+      //Going to compare a section of 3 squares to see if a turn is being made. in the snake.
+      //If a turn is being made, will use a corner art piece, otherwise will use a standard body piece
+      const currentSquare = document.querySelector(snake[piece]);
+      const previousSquare = document.querySelector(snake[piece - 1]);
+      const TwoSquaresBefore = document.querySelector(snake[piece - 2]);
+
+      let previousSquareImg = previousSquare.querySelector('img');
+
+      //If all Rows are the same, horizontal body
+      if (
+        currentSquare.dataset.row === previousSquare.dataset.row &&
+        currentSquare.dataset.row === TwoSquaresBefore.dataset.row
+      ) {
+        previousSquareImg.className = 'point-right';
+        previousSquareImg.src = 'images/snakebody.png';
+      } else if (
+        currentSquare.dataset.column === previousSquare.dataset.column &&
+        currentSquare.dataset.column === TwoSquaresBefore.dataset.column
+      ) {
+        previousSquareImg.className = 'point-up';
+        previousSquareImg.src = 'images/snakebody.png';
+      } else if (
+        (currentSquare.dataset.row < previousSquare.dataset.row &&
+          currentSquare.dataset.column < TwoSquaresBefore.dataset.column) ||
+        (currentSquare.dataset.column > previousSquare.dataset.column &&
+          currentSquare.dataset.row > TwoSquaresBefore.dataset.row)
+      ) {
+        previousSquareImg.className = 'point-right';
+        previousSquareImg.src = 'images/snaketurn.png';
+      } else if (
+        (currentSquare.dataset.row < previousSquare.dataset.row &&
+          currentSquare.dataset.column > TwoSquaresBefore.dataset.column) ||
+        (currentSquare.dataset.column < previousSquare.dataset.column &&
+          currentSquare.dataset.row > TwoSquaresBefore.dataset.row)
+      ) {
+        previousSquareImg.className = 'point-up';
+        previousSquareImg.src = 'images/snaketurn.png';
+      } else if (
+        (currentSquare.dataset.row > previousSquare.dataset.row &&
+          currentSquare.dataset.column < TwoSquaresBefore.dataset.column) ||
+        (currentSquare.dataset.column > previousSquare.dataset.column &&
+          currentSquare.dataset.row < TwoSquaresBefore.dataset.row)
+      ) {
+        previousSquareImg.className = 'point-down';
+        previousSquareImg.src = 'images/snaketurn.png';
+      } else if (
+        (currentSquare.dataset.row > previousSquare.dataset.row &&
+          currentSquare.dataset.column > TwoSquaresBefore.dataset.column) ||
+        (currentSquare.dataset.column < previousSquare.dataset.column &&
+          currentSquare.dataset.row < TwoSquaresBefore.dataset.row)
+      ) {
+        previousSquareImg.className = 'point-left';
+        previousSquareImg.src = 'images/snaketurn.png';
+      }
+    }
   }
 }
 
