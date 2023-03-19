@@ -14,6 +14,8 @@ let snake = [];
 let droppedApples = [];
 let currentDirection = 'right';
 
+let snakeWrapOn = false;
+
 const lengthScore = document.querySelector('#snake-length');
 const appleScore = document.querySelector('#apples-eaten');
 
@@ -171,7 +173,7 @@ function startGame() {
   }
   placeSnake();
   setTimeout(() => {
-    moveSnakeInterval = setInterval(moveSnake, 150);
+    moveSnakeInterval = setInterval(moveSnake, intervalSpeed);
     dropApple();
   }, 1000);
   appleInterval = setInterval(dropApple, 5000);
@@ -180,6 +182,7 @@ function startGame() {
 function moveSnake() {
   //Will Move differently based on direction, but for eachd direction, each time we move, we will add a new 'snake head' point to the start of the array and will remove the last value of the array
   snakeDirection();
+  checkSnakeWrap();
   let newHeadRef = `[data-row="${snakeRowRef}"][data-column = "${snakeColRef}"]`;
 
   if (checkSpotConditions(newHeadRef)) {
@@ -325,3 +328,54 @@ document.addEventListener('keydown', (event) => {
   }
   canKeyDown = false;
 });
+
+// Additional Options::
+
+//Speed Settings
+let initialIntervalSpeed = 150;
+intervalSpeed = initialIntervalSpeed;
+
+const speedSelect = document.querySelector('#speed');
+speedSelect.addEventListener('change', () => {
+  if (speedSelect.value === 'Slow') {
+    intervalSpeed = 200;
+  }
+  if (speedSelect.value === 'Normal') {
+    intervalSpeed = initialIntervalSpeed;
+  }
+  if (speedSelect.value === 'Faster') {
+    intervalSpeed = 75;
+  }
+  if (speedSelect.value === 'Insane') {
+    intervalSpeed = 50;
+  }
+});
+
+//Snake Wrap
+const wrapSelect = document.querySelector('#wrap');
+wrapSelect.addEventListener('change', () => {
+  if (wrapSelect.value === 'Off') {
+    snakeWrapOn = false;
+  } else {
+    snakeWrapOn = true;
+  }
+});
+
+function checkSnakeWrap() {
+  if (!snakeWrapOn) {
+    return;
+  } else {
+    if (snakeColRef === -1) {
+      snakeColRef = areaCols - 1;
+    }
+    if (snakeColRef === areaCols) {
+      snakeColRef = 0;
+    }
+    if (snakeRowRef === -1) {
+      snakeRowRef = areaRows - 1;
+    }
+    if (snakeRowRef === areaRows) {
+      snakeRowRef = 0;
+    }
+  }
+}

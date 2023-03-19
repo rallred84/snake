@@ -24,6 +24,7 @@ header {
 }
 
 h2 {
+  margin-top: 15px;
   font-size: 20px;
 }
 
@@ -105,15 +106,6 @@ img {
 .gray {
   background-color: #90a2b0;
 }
-
-/* .snake {
-  border: none;
-  height: 10px;
-} */
-
-/* .apple {
-  background-color: red;
-} */
 
 .pre-post {
   position: fixed;
